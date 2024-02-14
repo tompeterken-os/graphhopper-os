@@ -30,17 +30,17 @@ import java.util.Set;
 
 public class CarAverageSpeedParser extends AbstractAverageSpeedParser implements TagParser {
 
-    protected final Map<String, Integer> trackTypeSpeedMap = new HashMap<>();
+    protected final Map<String, Double> trackTypeSpeedMap = new HashMap<>();
     protected final Set<String> badSurfaceSpeedMap = new HashSet<>();
     // This value determines the maximal possible on roads with bad surfaces
-    private final int badSurfaceSpeed;
+    private final double badSurfaceSpeed;
 
     /**
      * A map which associates string to speed. Get some impression:
      * http://www.itoworld.com/map/124#fullscreen
      * http://wiki.openstreetmap.org/wiki/OSM_tags_for_routing/Maxspeed
      */
-    protected final Map<String, Integer> defaultSpeedMap = new HashMap<>();
+    protected final Map<String, Double> defaultSpeedMap = new HashMap<String, Double>();
 
     public CarAverageSpeedParser(EncodedValueLookup lookup, PMap properties) {
         this(lookup.getDecimalEncodedValue(VehicleSpeed.key(properties.getString("name", "car"))),
@@ -68,54 +68,84 @@ public class CarAverageSpeedParser extends AbstractAverageSpeedParser implements
         badSurfaceSpeedMap.add("compacted");
 
         // autobahn
-        defaultSpeedMap.put("motorway", 100);
-        defaultSpeedMap.put("motorway_link", 70);
+        defaultSpeedMap.put("motorway", 100.0);
+        defaultSpeedMap.put("motorway_link", 70.0);
         // bundesstraße
-        defaultSpeedMap.put("trunk", 70);
-        defaultSpeedMap.put("trunk_link", 65);
+        defaultSpeedMap.put("trunk", 70.0);
+        defaultSpeedMap.put("trunk_link", 65.0);
         // linking bigger town
-        defaultSpeedMap.put("primary", 65);
-        defaultSpeedMap.put("primary_link", 60);
+        defaultSpeedMap.put("primary", 65.0);
+        defaultSpeedMap.put("primary_link", 60.0);
         // linking towns + villages
-        defaultSpeedMap.put("secondary", 60);
-        defaultSpeedMap.put("secondary_link", 50);
+        defaultSpeedMap.put("secondary", 60.0);
+        defaultSpeedMap.put("secondary_link", 50.0);
         // streets without middle line separation
-        defaultSpeedMap.put("tertiary", 50);
-        defaultSpeedMap.put("tertiary_link", 40);
-        defaultSpeedMap.put("unclassified", 30);
-        defaultSpeedMap.put("residential", 30);
+        defaultSpeedMap.put("tertiary", 50.0);
+        defaultSpeedMap.put("tertiary_link", 40.0);
+        defaultSpeedMap.put("unclassified", 30.0);
+        defaultSpeedMap.put("residential", 30.0);
         // spielstraße
-        defaultSpeedMap.put("living_street", 5);
-        defaultSpeedMap.put("service", 20);
+        defaultSpeedMap.put("living_street", 5.0);
+        defaultSpeedMap.put("service", 20.0);
         // unknown road
-        defaultSpeedMap.put("road", 20);
+        defaultSpeedMap.put("road", 20.0);
         // forestry stuff
-        defaultSpeedMap.put("track", 15);
+        defaultSpeedMap.put("track", 15.0);
 
-        trackTypeSpeedMap.put("grade1", 20); // paved
-        trackTypeSpeedMap.put("grade2", 15); // now unpaved - gravel mixed with ...
-        trackTypeSpeedMap.put("grade3", 10); // ... hard and soft materials
+        trackTypeSpeedMap.put("grade1", 20.0); // paved
+        trackTypeSpeedMap.put("grade2", 15.0); // now unpaved - gravel mixed with ...
+        trackTypeSpeedMap.put("grade3", 10.0); // ... hard and soft materials
         trackTypeSpeedMap.put(null, defaultSpeedMap.get("track"));
 
         // limit speed on bad surfaces to 30 km/h
-        badSurfaceSpeed = 30;
+        badSurfaceSpeed = 30.0;
     }
 
-    protected double getSpeed(ReaderWay way) {
+    protected double getSpeed(ReaderWay way, Boolean reverse) {
         String highwayValue = way.getTag("highway", "");
-        Integer speed = defaultSpeedMap.get(highwayValue);
+//        Double speed = defaultSpeedMap.get(highwayValue);
+//
+//        // even inaccessible edges get a speed assigned
+//        if (speed == null) speed = 10.0;
+//
+//        if (highwayValue.equals("track")) {
+//            String tt = way.getTag("track type");
+//            if (!Helper.isEmpty(tt)) {
+//                Double tInt = trackTypeSpeedMap.get(tt);
+//                if (tInt != null)
+//                    speed = tInt;
+//            }
+//        }
 
-        // even inaccessible edges get a speed assigned
-        if (speed == null) speed = 10;
+        Double speed;
 
-        if (highwayValue.equals("track")) {
-            String tt = way.getTag("tracktype");
-            if (!Helper.isEmpty(tt)) {
-                Integer tInt = trackTypeSpeedMap.get(tt);
-                if (tInt != null)
-                    speed = tInt;
+        // First find a avgspeed:forward or avgspeed:backward
+        if (reverse) {
+            speed = Double.valueOf(way.getTag("avgspeed:backward", "0.0"));
+        } else {
+            speed = Double.valueOf(way.getTag("avgspeed:forward", "0.0"));
+        }
+
+        // If no speed yet, use avgspeed
+        if (speed == 0.0) speed = Double.valueOf(way.getTag("avgspeed", "0.0"));
+
+        // If still no avgspeed, use maxspeed:forward and maxspeed:backward
+        if (speed == 0.0) {
+            if (reverse) {
+                speed = Double.valueOf(way.getTag("maxspeed:backward", "0.0"));
+            } else {
+                speed = Double.valueOf(way.getTag("maxspeed:forward", "0.0"));
             }
         }
+
+        // If still no speed, use maxspeed
+        if (speed == 0.0) speed = Double.valueOf(way.getTag("maxspeed", "0.0"));
+
+        // If still no speed, use default
+        if (speed == 0.0) speed = defaultSpeedMap.get(highwayValue);
+
+        // even inaccessible edges get a speed assigned
+        if (speed == null) speed = 5.0;
 
         return speed;
     }
@@ -131,11 +161,12 @@ public class CarAverageSpeedParser extends AbstractAverageSpeedParser implements
         }
 
         // get assumed speed from highway type
-        double speed = getSpeed(way);
-        speed = applyBadSurfaceSpeed(way, speed);
+        double speedFwd = getSpeed(way, false);
+        double speedBwd = getSpeed(way, true);
+//        speed = applyBadSurfaceSpeed(way, speed);
 
-        setSpeed(false, edgeId, edgeIntAccess, applyMaxSpeed(way, speed, false));
-        setSpeed(true, edgeId, edgeIntAccess, applyMaxSpeed(way, speed, true));
+        setSpeed(false, edgeId, edgeIntAccess, applyMaxSpeed(way, speedFwd, false));
+        setSpeed(true, edgeId, edgeIntAccess, applyMaxSpeed(way, speedFwd, true));
     }
 
     /**
