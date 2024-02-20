@@ -51,6 +51,9 @@ public class DefaultVehicleEncodedValuesFactory implements VehicleEncodedValuesF
         if (name.equals(FOOT))
             return VehicleEncodedValues.foot(configuration);
 
+        if (name.equals(FOOTRAIL))
+            return VehicleEncodedValues.footrail((configuration));
+
         if (name.equals("hike"))
             throw new IllegalArgumentException("Instead of hike use custom_models/hike.json, see #2759");
 

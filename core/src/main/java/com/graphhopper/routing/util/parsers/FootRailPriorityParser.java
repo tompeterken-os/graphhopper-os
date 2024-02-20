@@ -15,7 +15,7 @@ import static com.graphhopper.routing.util.parsers.AbstractAccessParser.INTENDED
 import static com.graphhopper.routing.util.parsers.AbstractAverageSpeedParser.getMaxSpeed;
 import static com.graphhopper.routing.util.parsers.AbstractAverageSpeedParser.isValidSpeed;
 
-public class FootPriorityParser implements TagParser {
+public class FootRailPriorityParser implements TagParser {
     final Set<String> intendedValues = new HashSet<>(INTENDED);
     final Set<String> safeHighwayTags = new HashSet<>();
     final Set<String> avoidHighwayTags = new HashSet<>();
@@ -25,13 +25,13 @@ public class FootPriorityParser implements TagParser {
     protected EnumEncodedValue<RouteNetwork> footRouteEnc;
     protected Map<RouteNetwork, Integer> routeMap = new HashMap<>();
 
-    public FootPriorityParser(EncodedValueLookup lookup, PMap properties) {
+    public FootRailPriorityParser(EncodedValueLookup lookup, PMap properties) {
         this(lookup.getDecimalEncodedValue(VehiclePriority.key(properties.getString("name", "foot"))),
                 lookup.getEnumEncodedValue(FootNetwork.KEY, RouteNetwork.class)
         );
     }
 
-    protected FootPriorityParser(DecimalEncodedValue priorityEnc, EnumEncodedValue<RouteNetwork> footRouteEnc) {
+    protected FootRailPriorityParser(DecimalEncodedValue priorityEnc, EnumEncodedValue<RouteNetwork> footRouteEnc) {
         this.footRouteEnc = footRouteEnc;
         priorityWayEncoder = priorityEnc;
 
@@ -101,6 +101,10 @@ public class FootPriorityParser implements TagParser {
      */
     void collect(ReaderWay way, TreeMap<Double, Integer> weightToPrioMap) {
         String highway = way.getTag("highway");
+        String railway = way.getTag("railway");
+
+        if (railway != null)
+            weightToPrioMap.put(100d, PREFER.getValue());
 
         if (way.hasTag("foot", "designated"))
             weightToPrioMap.put(100d, PREFER.getValue());

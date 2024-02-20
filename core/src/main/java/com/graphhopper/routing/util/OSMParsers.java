@@ -79,6 +79,8 @@ public class OSMParsers {
             // (route=ferry), which we want, and there aren't so many such ways we do not want
             // https://github.com/graphhopper/graphhopper/pull/2702#discussion_r1038093050
             return true;
+        else if (way.getTag("railway") != null)
+            return true;
         else if ("pier".equals(way.getTag("man_made")))
             return true;
         else if ("platform".equals(way.getTag("railway")))

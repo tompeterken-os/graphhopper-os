@@ -27,7 +27,7 @@ import java.util.List;
 import static com.graphhopper.routing.util.VehicleEncodedValuesFactory.*;
 
 public class VehicleEncodedValues {
-    public static final List<String> OUTDOOR_VEHICLES = Arrays.asList(BIKE, RACINGBIKE, MOUNTAINBIKE, FOOT, WHEELCHAIR);
+    public static final List<String> OUTDOOR_VEHICLES = Arrays.asList(BIKE, RACINGBIKE, MOUNTAINBIKE, FOOT, FOOTRAIL, WHEELCHAIR);
 
     private final String name;
     private final BooleanEncodedValue accessEnc;
@@ -37,6 +37,19 @@ public class VehicleEncodedValues {
 
     public static VehicleEncodedValues foot(PMap properties) {
         String name = properties.getString("name", "foot");
+        int speedBits = properties.getInt("speed_bits", 4);
+        double speedFactor = properties.getDouble("speed_factor", 1);
+        boolean speedTwoDirections = properties.getBool("speed_two_directions", false);
+        boolean turnCosts = properties.getBool("turn_costs", false);
+        BooleanEncodedValue accessEnc = VehicleAccess.create(name);
+        DecimalEncodedValue speedEnc = VehicleSpeed.create(name, speedBits, speedFactor, speedTwoDirections);
+        DecimalEncodedValue priorityEnc = VehiclePriority.create(name, 4, PriorityCode.getFactor(1), false);
+        BooleanEncodedValue turnRestrictionEnc = turnCosts ? TurnRestriction.create(name) : null;
+        return new VehicleEncodedValues(name, accessEnc, speedEnc, priorityEnc, turnRestrictionEnc);
+    }
+
+    public static VehicleEncodedValues footrail(PMap properties) {
+        String name = properties.getString("name", "footrail");
         int speedBits = properties.getInt("speed_bits", 4);
         double speedFactor = properties.getDouble("speed_factor", 1);
         boolean speedTwoDirections = properties.getBool("speed_two_directions", false);

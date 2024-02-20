@@ -79,6 +79,14 @@ public class VehicleTagParsers {
         );
     }
 
+    public static VehicleTagParsers footrail(EncodedValueLookup lookup, PMap properties) {
+        return new VehicleTagParsers(
+                new FootRailAccessParser(lookup, properties).init(properties.getObject("date_range_parser", new DateRangeParser())),
+                new FootRailAverageSpeedParser(lookup, properties),
+                new FootRailPriorityParser(lookup, properties)
+        );
+    }
+
     public static VehicleTagParsers wheelchair(EncodedValueLookup lookup, PMap properties) {
         return new VehicleTagParsers(
                 new WheelchairAccessParser(lookup, properties).init(properties.getObject("date_range_parser", new DateRangeParser())),
