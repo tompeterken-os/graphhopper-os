@@ -129,6 +129,9 @@ public class CarAverageSpeedParser extends AbstractAverageSpeedParser implements
         // If no speed yet, use avgspeed
         if (speed == 0.0) speed = Double.valueOf(way.getTag("avgspeed", "0.0"));
 
+        // If speed too small but exists, set to 1
+        if ((speed < 1.0) & (speed > 0.0)) speed = 1.0;
+
         // If still no avgspeed, use maxspeed:forward and maxspeed:backward
         if (speed == 0.0) {
             if (reverse) {
@@ -166,7 +169,7 @@ public class CarAverageSpeedParser extends AbstractAverageSpeedParser implements
 //        speed = applyBadSurfaceSpeed(way, speed);
 
         setSpeed(false, edgeId, edgeIntAccess, applyMaxSpeed(way, speedFwd, false));
-        setSpeed(true, edgeId, edgeIntAccess, applyMaxSpeed(way, speedFwd, true));
+        setSpeed(true, edgeId, edgeIntAccess, applyMaxSpeed(way, speedBwd, true));
     }
 
     /**
