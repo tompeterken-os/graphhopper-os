@@ -166,7 +166,7 @@ public class CarAverageSpeedParser extends AbstractAverageSpeedParser implements
 //        speed = applyBadSurfaceSpeed(way, speed);
 
         setSpeed(false, edgeId, edgeIntAccess, applyMaxSpeed(way, speedFwd, false));
-        setSpeed(true, edgeId, edgeIntAccess, applyMaxSpeed(way, speedFwd, true));
+        setSpeed(true, edgeId, edgeIntAccess, applyMaxSpeed(way, speedBwd, true));
     }
 
     /**
