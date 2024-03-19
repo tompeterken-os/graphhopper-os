@@ -20,6 +20,7 @@ package com.graphhopper.routing.util.parsers;
 import com.graphhopper.reader.ReaderWay;
 import com.graphhopper.routing.ev.*;
 import com.graphhopper.routing.util.FerrySpeedCalculator;
+import com.graphhopper.routing.util.parsers.helpers.OSMValueExtractor;
 import com.graphhopper.util.Helper;
 import com.graphhopper.util.PMap;
 
@@ -40,7 +41,7 @@ public class CarAverageSpeedParser extends AbstractAverageSpeedParser implements
      * http://www.itoworld.com/map/124#fullscreen
      * http://wiki.openstreetmap.org/wiki/OSM_tags_for_routing/Maxspeed
      */
-    protected final Map<String, Double> defaultSpeedMap = new HashMap<String, Double>();
+    protected final Map<String, Double> defaultSpeedMap = new HashMap<>();
 
     public CarAverageSpeedParser(EncodedValueLookup lookup, PMap properties) {
         this(lookup.getDecimalEncodedValue(VehicleSpeed.key(properties.getString("name", "car"))),
@@ -117,40 +118,85 @@ public class CarAverageSpeedParser extends AbstractAverageSpeedParser implements
 //            }
 //        }
 
-        Double speed;
+        // Extract general average speed tag
+        Double avgSpeed = Double.valueOf(way.getTag("avgspeed", "0.0"));
 
-        // First find a avgspeed:forward or avgspeed:backward
-        if (reverse) {
-            speed = Double.valueOf(way.getTag("avgspeed:backward"));
-        } else {
-            speed = Double.valueOf(way.getTag("avgspeed:forward"));
+        // Extract directed average speed tag
+        Double directedAvgSpeed = Double.valueOf(way.getTag(reverse ? "avgspeed:backward" : "avgspeed:forward", "0.0"));
+
+        // Extract max speed tag
+        Double maxSpeed = Double.valueOf(way.getTag("maxspeed", "0.0"));
+
+        // Retrieve default speed based on highway value
+        Double defaultSpeed = defaultSpeedMap.get(highwayValue);
+
+        // If the directed average speed exists, use that value
+        // Note: isValidSpeed comes from AbstractAverageSpeedParser.
+        // See getMaxSpeed in AbstractAverageSpeedParser for an example usage.
+        if (isValidSpeed(directedAvgSpeed) && directedAvgSpeed > 0.0) {
+            return Math.max(directedAvgSpeed, 1.0); // Ensure speed is at least 1
         }
 
-        // If no speed yet, use avgspeed
-        if ((speed == 0.0) | (speed == null)) speed = Double.valueOf(way.getTag("avgspeed"));
-
-        // If speed too small but exists, set to 1
-        if ((speed < 1.0) & (speed > 0.0)) speed = 1.0;
-
-        // If still no avgspeed, use maxspeed:forward and maxspeed:backward
-        if ((speed == 0.0) | (speed == null)) {
-            if (reverse) {
-                speed = Double.valueOf(way.getTag("maxspeed:backward"));
-            } else {
-                speed = Double.valueOf(way.getTag("maxspeed:forward"));
-            }
+        // Otherwise, if the general average speed exists, use that value
+        if (isValidSpeed(avgSpeed) && avgSpeed > 0.0) {
+            return Math.max(avgSpeed, 1.0); // Ensure speed is at least 1
         }
 
-        // If still no speed, use maxspeed
-        if ((speed == 0.0) | (speed == null)) speed = Double.valueOf(way.getTag("maxspeed", "0.0"));
+        // Otherwise, if the max speed exists, use that value
+        if (isValidSpeed(maxSpeed) && maxSpeed > 0.0) {
+            return Math.max(maxSpeed, 1.0); // Ensure speed is at least 1
+        }
 
-        // If still no speed, use default
-        if ((speed == 0.0) | (speed == null)) speed = defaultSpeedMap.get(highwayValue);
+        // Otherwise, if there's a default speed, use that value
+        if (defaultSpeed != null) {
+            return Math.max(defaultSpeed, 1.0); // Ensure speed is at least 1
+        }
 
-        // even inaccessible edges get a speed assigned
-        if ((speed == 0.0) | (speed == null)) speed = 5.0;
+        // If none of the above, then return 15.3
+        // (NOTE TO RA: this isn't the speed that the links are being assigned????)
+        return 15.3;
 
-        return speed;
+
+        // ========
+        // This is my previous logic flow which definitely worked at one point
+        // but I must have broken something in it
+        // ========
+
+//        Double speed;
+//
+//        // First find a avgspeed:forward or avgspeed:backward
+//        if (reverse) {
+//            speed = Double.valueOf(way.getTag("avgspeed:backward", "0.0"));
+//        } else {
+//            speed = Double.valueOf(way.getTag("avgspeed:forward", "0.0"));
+//        }
+//
+//        // If no speed yet, use avgspeed
+//        if ((!isValidSpeed(speed)) || (speed == 0.0)) speed = Double.valueOf(way.getTag("avgspeed", "0.0"));
+//
+//
+//        // If still no avgspeed, use maxspeed:forward and maxspeed:backward
+//        if ((!isValidSpeed(speed)) || (speed == 0.0)) {
+//            if (reverse) {
+//                speed = Double.valueOf(way.getTag("maxspeed:backward", "0.0"));
+//            } else {
+//                speed = Double.valueOf(way.getTag("maxspeed:forward", "0.0"));
+//            }
+//        }
+//
+//        // If still no speed, use maxspeed
+//        if ((!isValidSpeed(speed)) || (speed == 0.0)) speed = Double.valueOf(way.getTag("maxspeed", "0.0"));
+//
+//        // If still no speed, use default
+//        if ((!isValidSpeed(speed)) || (speed == 0.0)) speed = defaultSpeedMap.get(highwayValue);
+//
+//        // even inaccessible edges get a speed assigned
+//        if ((!isValidSpeed(speed)) || (speed == 0.0)) speed = 1.0;
+//
+//        // If speed too small but exists, set to 1
+//        if (speed < 1.0) speed = 1.0;
+//
+//        return speed;
     }
 
     @Override
