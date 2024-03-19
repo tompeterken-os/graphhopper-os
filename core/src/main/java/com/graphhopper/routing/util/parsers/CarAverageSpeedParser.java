@@ -121,34 +121,34 @@ public class CarAverageSpeedParser extends AbstractAverageSpeedParser implements
 
         // First find a avgspeed:forward or avgspeed:backward
         if (reverse) {
-            speed = Double.valueOf(way.getTag("avgspeed:backward", "0.0"));
+            speed = Double.valueOf(way.getTag("avgspeed:backward"));
         } else {
-            speed = Double.valueOf(way.getTag("avgspeed:forward", "0.0"));
+            speed = Double.valueOf(way.getTag("avgspeed:forward"));
         }
 
         // If no speed yet, use avgspeed
-        if (speed == 0.0) speed = Double.valueOf(way.getTag("avgspeed", "0.0"));
+        if ((speed == 0.0) | (speed == null)) speed = Double.valueOf(way.getTag("avgspeed"));
 
         // If speed too small but exists, set to 1
         if ((speed < 1.0) & (speed > 0.0)) speed = 1.0;
 
         // If still no avgspeed, use maxspeed:forward and maxspeed:backward
-        if (speed == 0.0) {
+        if ((speed == 0.0) | (speed == null)) {
             if (reverse) {
-                speed = Double.valueOf(way.getTag("maxspeed:backward", "0.0"));
+                speed = Double.valueOf(way.getTag("maxspeed:backward"));
             } else {
-                speed = Double.valueOf(way.getTag("maxspeed:forward", "0.0"));
+                speed = Double.valueOf(way.getTag("maxspeed:forward"));
             }
         }
 
         // If still no speed, use maxspeed
-        if (speed == 0.0) speed = Double.valueOf(way.getTag("maxspeed", "0.0"));
+        if ((speed == 0.0) | (speed == null)) speed = Double.valueOf(way.getTag("maxspeed", "0.0"));
 
         // If still no speed, use default
-        if (speed == 0.0) speed = defaultSpeedMap.get(highwayValue);
+        if ((speed == 0.0) | (speed == null)) speed = defaultSpeedMap.get(highwayValue);
 
         // even inaccessible edges get a speed assigned
-        if (speed == null) speed = 5.0;
+        if ((speed == 0.0) | (speed == null)) speed = 5.0;
 
         return speed;
     }
