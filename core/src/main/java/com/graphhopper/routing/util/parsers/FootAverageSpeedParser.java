@@ -11,9 +11,12 @@ import java.util.Map;
 import static com.graphhopper.routing.ev.RouteNetwork.*;
 import static com.graphhopper.routing.util.PriorityCode.UNCHANGED;
 
+import com.graphhopper.util.DistanceCalcEarth;
+import com.graphhopper.util.PointList;
+
 public class FootAverageSpeedParser extends AbstractAverageSpeedParser implements TagParser {
-    static final int SLOW_SPEED = 2;
-    static final int MEAN_SPEED = 5;
+    static final double SLOW_SPEED = 2;
+    static final double MEAN_SPEED = 5;
     protected Map<RouteNetwork, Integer> routeMap = new HashMap<>();
 
     public FootAverageSpeedParser(EncodedValueLookup lookup, PMap properties) {
@@ -21,13 +24,54 @@ public class FootAverageSpeedParser extends AbstractAverageSpeedParser implement
                 lookup.getDecimalEncodedValue(FerrySpeed.KEY));
     }
 
-    protected FootAverageSpeedParser(DecimalEncodedValue speedEnc, DecimalEncodedValue ferrySpeedEnc) {
-        super(speedEnc, ferrySpeedEnc);
+    protected FootAverageSpeedParser(DecimalEncodedValue speedEnc, DecimalEncodedValue ferrySpeed) {
+        super(speedEnc, ferrySpeed);
 
         routeMap.put(INTERNATIONAL, UNCHANGED.getValue());
         routeMap.put(NATIONAL, UNCHANGED.getValue());
         routeMap.put(REGIONAL, UNCHANGED.getValue());
         routeMap.put(LOCAL, UNCHANGED.getValue());
+    }
+
+    protected double getElevation(ReaderWay way, Boolean reverse) {
+
+        Double elevation;
+
+        if (reverse) {
+                elevation = Double.valueOf(way.getTag("ascent:backward", "0.0"));
+            } else {
+               elevation = Double.valueOf(way.getTag("ascent:forward", "0.0"));
+            }
+
+        return elevation;
+    }
+
+   protected double getEdgeDistance(ReaderWay way) {
+        PointList pointList = way.getTag("point_list", null);
+
+        double distance;
+
+        if (pointList != null) {   
+            distance = DistanceCalcEarth.calcDistance(pointList, false) / 1000.0;
+        } else {
+            distance = 0.0;
+        }
+        
+        return distance;
+   }
+
+    protected double getSpeed(ReaderWay way, Boolean reverse) {
+
+        double speed; 
+        double elevation = getElevation(way, reverse);
+        double distance = getEdgeDistance(way);
+    
+        if (distance > 0.0) {
+            speed = (distance)/(distance/MEAN_SPEED + elevation/600.0);
+        } else {
+            speed = MEAN_SPEED;
+        }
+        return speed;
     }
 
     @Override
@@ -44,15 +88,11 @@ public class FootAverageSpeedParser extends AbstractAverageSpeedParser implement
                 return;
         }
 
-        String sacScale = way.getTag("sac_scale");
-        if (sacScale != null) {
-            setSpeed(false, edgeId, edgeIntAccess, "hiking".equals(sacScale) ? MEAN_SPEED : SLOW_SPEED);
+        double speedFwd = getSpeed(way, false);
+        double speedBwd = getSpeed(way, true);
+
+        setSpeed(false, edgeId, edgeIntAccess, way.hasTag("highway", "steps") ? MEAN_SPEED - 2 : speedFwd);
             if (avgSpeedEnc.isStoreTwoDirections())
-                setSpeed(true, edgeId, edgeIntAccess, "hiking".equals(sacScale) ? MEAN_SPEED : SLOW_SPEED);
-        } else {
-            setSpeed(false, edgeId, edgeIntAccess, way.hasTag("highway", "steps") ? MEAN_SPEED - 2 : MEAN_SPEED);
-            if (avgSpeedEnc.isStoreTwoDirections())
-                setSpeed(true, edgeId, edgeIntAccess, way.hasTag("highway", "steps") ? MEAN_SPEED - 2 : MEAN_SPEED);
-        }
+                setSpeed(true, edgeId, edgeIntAccess, way.hasTag("highway", "steps") ? MEAN_SPEED - 2 : speedBwd);
     }
 }

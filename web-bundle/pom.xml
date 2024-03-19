@@ -165,14 +165,12 @@
 <!--                            <goal>npm</goal>-->
 <!--                        </goals>-->
 <!--                        <configuration>-->
-<!--&lt;!&ndash;                            suppress UnresolvedMavenProperty (IntelliJ shows an error otherwise...)&ndash;&gt;-->
 <!--                            <arguments>-->
 <!--                                pack &#45;&#45;pack-destination=${basedir}/target-->
 <!--                                C:\Users\tpeterken\Documents\java\graphhopper\graphhopper-maps-os\-->
 <!--                            </arguments>-->
 <!--                        </configuration>-->
 <!--                    </execution>-->
-
                 </executions>
             </plugin>
             <plugin>
@@ -221,7 +219,6 @@
 <!--                                       dest="${basedir}/target/classes/com/graphhopper/maps">-->
 <!--                                    <patternset>-->
 <!--                                        <include name="package/dist/**"/>-->
-<!--&lt;!&ndash;                                        <exclude name="package/dist/config.js"/>&ndash;&gt;-->
 <!--                                    </patternset>-->
 <!--                                    <mapper type="regexp" from="package\/dist\/(.*)" to="\1"/>-->
 <!--                                </untar>-->

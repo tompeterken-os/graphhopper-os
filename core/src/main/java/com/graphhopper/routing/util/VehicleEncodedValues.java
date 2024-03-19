@@ -37,9 +37,9 @@ public class VehicleEncodedValues {
 
     public static VehicleEncodedValues foot(PMap properties) {
         String name = properties.getString("name", "foot");
-        int speedBits = properties.getInt("speed_bits", 4);
-        double speedFactor = properties.getDouble("speed_factor", 1);
-        boolean speedTwoDirections = properties.getBool("speed_two_directions", false);
+        int speedBits = properties.getInt("speed_bits", 10);
+        double speedFactor = properties.getDouble("speed_factor", 0.1);
+        boolean speedTwoDirections = properties.getBool("speed_two_directions", true);
         boolean turnCosts = properties.getBool("turn_costs", false);
         BooleanEncodedValue accessEnc = VehicleAccess.create(name);
         DecimalEncodedValue speedEnc = VehicleSpeed.create(name, speedBits, speedFactor, speedTwoDirections);
@@ -93,8 +93,8 @@ public class VehicleEncodedValues {
 
     public static VehicleEncodedValues car(PMap properties) {
         String name = properties.getString("name", "car");
-        int speedBits = properties.getInt("speed_bits", 7);
-        double speedFactor = properties.getDouble("speed_factor", 2);
+        int speedBits = properties.getInt("speed_bits", 13);
+        double speedFactor = properties.getDouble("speed_factor", 0.1);
         boolean turnCosts = properties.getBool("turn_costs", false);
         BooleanEncodedValue accessEnc = VehicleAccess.create(name);
         DecimalEncodedValue speedEnc = VehicleSpeed.create(name, speedBits, speedFactor, true);
