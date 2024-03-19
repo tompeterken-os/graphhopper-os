@@ -144,20 +144,6 @@
                             <npmVersion>8.15.0</npmVersion>
                         </configuration>
                     </execution>
-<!--                    <execution>-->
-<!--                        <id>download graphhopper maps</id>-->
-<!--                        <phase>generate-resources</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>npm</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            &lt;!&ndash;suppress UnresolvedMavenProperty (IntelliJ shows an error otherwise...)&ndash;&gt;-->
-<!--                            <arguments>-->
-<!--                                pack &#45;&#45;pack-destination=${basedir}/target-->
-<!--                                @graphhopper/graphhopper-maps-bundle@${graphhopper-maps.version}-->
-<!--                            </arguments>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
                     <execution>
                         <id>download graphhopper maps</id>
                         <phase>generate-resources</phase>
@@ -165,13 +151,27 @@
                             <goal>npm</goal>
                         </goals>
                         <configuration>
-<!--                            suppress UnresolvedMavenProperty (IntelliJ shows an error otherwise...)-->
+                            <!--suppress UnresolvedMavenProperty (IntelliJ shows an error otherwise...)-->
                             <arguments>
                                 pack --pack-destination=${basedir}/target
-                                C:\Users\tpeterken\Documents\java\graphhopper\graphhopper-maps-os\
+                                @graphhopper/graphhopper-maps-bundle@${graphhopper-maps.version}
                             </arguments>
                         </configuration>
                     </execution>
+<!--                    <execution>-->
+<!--                        <id>download graphhopper maps</id>-->
+<!--                        <phase>generate-resources</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>npm</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--&lt;!&ndash;                            suppress UnresolvedMavenProperty (IntelliJ shows an error otherwise...)&ndash;&gt;-->
+<!--                            <arguments>-->
+<!--                                pack &#45;&#45;pack-destination=${basedir}/target-->
+<!--                                C:\Users\tpeterken\Documents\java\graphhopper\graphhopper-maps-os\-->
+<!--                            </arguments>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
 
                 </executions>
             </plugin>
@@ -191,37 +191,17 @@
                             <goal>run</goal>
                         </goals>
                     </execution>
-<!--                    <execution>-->
-<!--                        <id>unzip maps bundle</id>-->
-<!--                        <phase>process-resources</phase>-->
-<!--                        <configuration>-->
-<!--                            <target>-->
-<!--                                <untar compression="gzip"-->
-<!--                                       src="${basedir}/target/graphhopper-graphhopper-maps-bundle-${graphhopper-maps.version}.tgz"-->
-<!--                                       dest="${basedir}/target/classes/com/graphhopper/maps">-->
-<!--                                    <patternset>-->
-<!--                                        <include name="package/dist/**"/>-->
-<!--                                        <exclude name="package/dist/config.js"/>-->
-<!--                                    </patternset>-->
-<!--                                    <mapper type="regexp" from="package\/dist\/(.*)" to="\1"/>-->
-<!--                                </untar>-->
-<!--                            </target>-->
-<!--                        </configuration>-->
-<!--                        <goals>-->
-<!--                            <goal>run</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
                     <execution>
                         <id>unzip maps bundle</id>
                         <phase>process-resources</phase>
                         <configuration>
                             <target>
                                 <untar compression="gzip"
-                                       src="${basedir}/target/graphhopper-maps-0.7.tgz"
+                                       src="${basedir}/target/graphhopper-graphhopper-maps-bundle-${graphhopper-maps.version}.tgz"
                                        dest="${basedir}/target/classes/com/graphhopper/maps">
                                     <patternset>
                                         <include name="package/dist/**"/>
-<!--                                        <exclude name="package/dist/config.js"/>-->
+                                        <exclude name="package/dist/config.js"/>
                                     </patternset>
                                     <mapper type="regexp" from="package\/dist\/(.*)" to="\1"/>
                                 </untar>
@@ -231,6 +211,26 @@
                             <goal>run</goal>
                         </goals>
                     </execution>
+<!--                    <execution>-->
+<!--                        <id>unzip maps bundle</id>-->
+<!--                        <phase>process-resources</phase>-->
+<!--                        <configuration>-->
+<!--                            <target>-->
+<!--                                <untar compression="gzip"-->
+<!--                                       src="${basedir}/target/graphhopper-maps-0.7.tgz"-->
+<!--                                       dest="${basedir}/target/classes/com/graphhopper/maps">-->
+<!--                                    <patternset>-->
+<!--                                        <include name="package/dist/**"/>-->
+<!--&lt;!&ndash;                                        <exclude name="package/dist/config.js"/>&ndash;&gt;-->
+<!--                                    </patternset>-->
+<!--                                    <mapper type="regexp" from="package\/dist\/(.*)" to="\1"/>-->
+<!--                                </untar>-->
+<!--                            </target>-->
+<!--                        </configuration>-->
+<!--                        <goals>-->
+<!--                            <goal>run</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
                 </executions>
             </plugin>
         </plugins>
