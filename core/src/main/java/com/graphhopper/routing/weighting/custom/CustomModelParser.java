@@ -425,10 +425,10 @@ public class CustomModelParser {
             public Java.MethodDeclarator copyMethodDeclarator(Java.MethodDeclarator subject) throws CompileException {
                 if (subject.name.equals("getSpeed") && !speedStatements.isEmpty() && !speedInjected) {
                     speedInjected = true;
-                    return injectStatements(subject, this, speedStatements);
+                    return injectStatements_(subject, this, speedStatements);
                 } else if (subject.name.equals("getPriority") && !priorityStatements.isEmpty() && !priorityInjected) {
                     priorityInjected = true;
-                    return injectStatements(subject, this, priorityStatements);
+                    return injectStatements_(subject, this, priorityStatements);
                 } else {
                     return super.copyMethodDeclarator(subject);
                 }
@@ -437,7 +437,7 @@ public class CustomModelParser {
         return cu;
     }
 
-    private static Java.MethodDeclarator injectStatements(Java.MethodDeclarator subject, DeepCopier deepCopier,
+    private static Java.MethodDeclarator injectStatements_(Java.MethodDeclarator subject, DeepCopier deepCopier,
                                                           List<Java.BlockStatement> statements) {
         try {
             if (statements.isEmpty())

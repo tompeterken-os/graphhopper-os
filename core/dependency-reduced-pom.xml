@@ -61,6 +61,22 @@
     </pluginManagement>
     <plugins>
       <plugin>
+        <groupId>pl.project13.maven</groupId>
+        <artifactId>git-commit-id-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>revision</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <dotGitDirectory>${parent.basedir}/.git</dotGitDirectory>
+          <failOnNoGitDirectory>false</failOnNoGitDirectory>
+          <failOnUnableToExtractRepoInfo>false</failOnUnableToExtractRepoInfo>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-shade-plugin</artifactId>
         <version>3.2.1</version>
         <executions>
@@ -73,7 +89,7 @@
               <transformers>
                 <transformer />
                 <transformer>
-                  <mainClass>com.graphhopper.application.GraphHopperApplication</mainClass>
+                  <mainClass>com.graphhopper.GraphHopper</mainClass>
                 </transformer>
               </transformers>
             </configuration>
@@ -91,22 +107,6 @@
               </excludes>
             </filter>
           </filters>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>pl.project13.maven</groupId>
-        <artifactId>git-commit-id-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>revision</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <dotGitDirectory>${parent.basedir}/.git</dotGitDirectory>
-          <failOnNoGitDirectory>false</failOnNoGitDirectory>
-          <failOnUnableToExtractRepoInfo>false</failOnUnableToExtractRepoInfo>
         </configuration>
       </plugin>
     </plugins>
