@@ -15,6 +15,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
+// modified to not block private roads
 package com.graphhopper.routing.util.parsers;
 
 import com.graphhopper.reader.ReaderWay;
@@ -50,7 +52,7 @@ public class CarAccessParser extends AbstractAccessParser implements TagParser {
         restrictedValues.add("forestry");
         restrictedValues.add("delivery");
 
-        blockPrivate(properties.getBool("block_private", true));
+        blockPrivate(properties.getBool("block_private", false));
         blockFords(properties.getBool("block_fords", false));
 
         intendedValues.add("yes");

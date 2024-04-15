@@ -37,7 +37,7 @@ public class FootRailAccessParser extends AbstractAccessParser implements TagPar
     protected Map<RouteNetwork, Integer> routeMap = new HashMap<>();
 
     public FootRailAccessParser(EncodedValueLookup lookup, PMap properties) {
-        this(lookup.getBooleanEncodedValue(VehicleAccess.key(properties.getString("name", "foot"))));
+        this(lookup.getBooleanEncodedValue(VehicleAccess.key(properties.getString("name", "footrail"))));
         blockPrivate(properties.getBool("block_private", true));
         blockFords(properties.getBool("block_fords", false));
     }
@@ -96,25 +96,50 @@ public class FootRailAccessParser extends AbstractAccessParser implements TagPar
     public WayAccess getAccess(ReaderWay way) {
         String highwayValue = way.getTag("highway");
         String railwayValue = way.getTag("railway");
+        String footTag = way.getTag("foot");
 
-//        if (railwayValue != null) {
-//            return WayAccess.WAY;
-//        }
+
+        // add all railways for now - refine later
+        //if (railwayValue != null) {
+        //    return WayAccess.WAY;
+        //}
+
+        // temporarily make all foot have access - this must be changed later!!!
+        if (footTag != null) {
+            return WayAccess.WAY;
+        }
+
+
         if (highwayValue == null) {
-            WayAccess acceptPotentially = WayAccess.CAN_SKIP;
+            WayAccess acceptPotentially = WayAccess.WAY; // refine!
+            
+            if (footTag != null) 
+                acceptPotentially = WayAccess.WAY; // refine!!
+            else acceptPotentially = WayAccess.CAN_SKIP; // refine!!
 
             if (FerrySpeedCalculator.isFerry(way)) {
-                String footTag = way.getTag("foot");
+                //String footTag = way.getTag("foot");
                 if (footTag == null || intendedValues.contains(footTag))
                     acceptPotentially = WayAccess.FERRY;
+            } else {
+                if (footTag != null) 
+                    acceptPotentially = WayAccess.WAY;
             }
 
-            // special case not for all acceptedRailways, only platform
-            if (way.hasTag("railway", "platform"))
+            if (railwayValue != null) 
                 acceptPotentially = WayAccess.WAY;
+
+
+            // special case not for all acceptedRailways, only platform
+            //if (way.hasTag("railway", "platform"))
+            //    acceptPotentially = WayAccess.WAY;
 
             if (way.hasTag("man_made", "pier"))
                 acceptPotentially = WayAccess.WAY;
+
+            //add railways for now - should potentially create a RailSpeedCalculator instead
+            //if (way.hasTag("railway", "rail"))
+            //    acceptPotentially = WayAccess.WAY;
 
             if (!acceptPotentially.canSkip()) {
                 if (way.hasTag(restrictions, restrictedValues) && !getConditionalTagInspector().isRestrictedWayConditionallyPermitted(way))
@@ -144,6 +169,9 @@ public class FootRailAccessParser extends AbstractAccessParser implements TagPar
 
         if (way.hasTag("sidewalk", sidewalkValues))
             return WayAccess.WAY;
+
+        if (footTag != null)
+            return WayAccess.WAY; // check and refine
 
         if (!allowedHighwayTags.contains(highwayValue))
             return WayAccess.CAN_SKIP;

@@ -16,6 +16,8 @@
  *  limitations under the License.
  */
 
+//modified to include car priority parser
+
 package com.graphhopper.routing.util;
 
 import com.graphhopper.reader.osm.conditional.DateRangeParser;
@@ -43,7 +45,7 @@ public class VehicleTagParsers {
         return new VehicleTagParsers(
                 new CarAccessParser(lookup, properties).init(properties.getObject("date_range_parser", new DateRangeParser())),
                 new CarAverageSpeedParser(lookup, properties),
-                null
+                new CarPriorityParser(lookup, properties)
         );
     }
 

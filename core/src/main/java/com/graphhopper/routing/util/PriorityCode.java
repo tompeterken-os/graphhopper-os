@@ -26,19 +26,26 @@ import java.util.TreeMap;
  *
  * @author Peter Karich
  */
+
+/**
+ * Modified to allow even lower priority factors 
+ * (values all multiplied by 10 but now divide by 100 to get the factor)
+ */
+
 public enum PriorityCode {
     EXCLUDE(0),
-    REACH_DESTINATION(1),
-    VERY_BAD(3),
-    BAD(5),
-    AVOID_MORE(6),
-    AVOID(8),
-    SLIGHT_AVOID(9),
-    UNCHANGED(10),
-    SLIGHT_PREFER(11),
-    PREFER(12),
-    VERY_NICE(13),
-    BEST(15);
+    CUSTOM_DESTINATION(1),
+    REACH_DESTINATION(10),
+    VERY_BAD(30),
+    BAD(50),
+    AVOID_MORE(60),
+    AVOID(80),
+    SLIGHT_AVOID(90),
+    UNCHANGED(100),
+    SLIGHT_PREFER(110),
+    PREFER(120),
+    VERY_NICE(130),
+    BEST(150);
 
     private final int value;
     public static final TreeMap<Integer, PriorityCode> VALUES = new TreeMap<>();
@@ -59,7 +66,7 @@ public enum PriorityCode {
     }
 
     public static double getFactor(int value) {
-        return (double) value / 10.0;
+        return (double) value / 100.0;
     }
 
     public static double getValue(int value) {

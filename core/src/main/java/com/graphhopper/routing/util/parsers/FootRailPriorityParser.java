@@ -22,17 +22,17 @@ public class FootRailPriorityParser implements TagParser {
     protected HashSet<String> sidewalkValues = new HashSet<>(5);
     protected HashSet<String> sidewalksNoValues = new HashSet<>(5);
     protected final DecimalEncodedValue priorityWayEncoder;
-    protected EnumEncodedValue<RouteNetwork> footRouteEnc;
+    protected EnumEncodedValue<RouteNetwork> footrailRouteEnc;
     protected Map<RouteNetwork, Integer> routeMap = new HashMap<>();
 
     public FootRailPriorityParser(EncodedValueLookup lookup, PMap properties) {
-        this(lookup.getDecimalEncodedValue(VehiclePriority.key(properties.getString("name", "foot"))),
-                lookup.getEnumEncodedValue(FootNetwork.KEY, RouteNetwork.class)
+        this(lookup.getDecimalEncodedValue(VehiclePriority.key(properties.getString("name", "footrail"))),
+                lookup.getEnumEncodedValue(FootRailNetwork.KEY, RouteNetwork.class)
         );
     }
 
-    protected FootRailPriorityParser(DecimalEncodedValue priorityEnc, EnumEncodedValue<RouteNetwork> footRouteEnc) {
-        this.footRouteEnc = footRouteEnc;
+    protected FootRailPriorityParser(DecimalEncodedValue priorityEnc, EnumEncodedValue<RouteNetwork> footrailRouteEnc) {
+        this.footrailRouteEnc = footrailRouteEnc;
         priorityWayEncoder = priorityEnc;
 
         sidewalksNoValues.add("no");
@@ -73,11 +73,18 @@ public class FootRailPriorityParser implements TagParser {
     @Override
     public void handleWayTags(int edgeId, EdgeIntAccess edgeIntAccess, ReaderWay way, IntsRef relationFlags) {
         String highwayValue = way.getTag("highway");
-        Integer priorityFromRelation = routeMap.get(footRouteEnc.getEnum(false, edgeId, edgeIntAccess));
+        Integer priorityFromRelation = routeMap.get(footrailRouteEnc.getEnum(false, edgeId, edgeIntAccess));
+        String railwayValue = way.getTag("railway");
+        String footTag = way.getTag("foot");
+        if (footTag != null)
+            priorityWayEncoder.setDecimal(false, edgeId, edgeIntAccess, PriorityCode.getValue(120)); // check and refine!  
+        if (railwayValue != null)
+            priorityWayEncoder.setDecimal(false, edgeId, edgeIntAccess, PriorityCode.getValue(120)); // check and refine!  
         if (highwayValue == null) {
             if (FerrySpeedCalculator.isFerry(way))
                 priorityWayEncoder.setDecimal(false, edgeId, edgeIntAccess, PriorityCode.getValue(handlePriority(way, priorityFromRelation)));
         } else {
+
             priorityWayEncoder.setDecimal(false, edgeId, edgeIntAccess, PriorityCode.getValue(handlePriority(way, priorityFromRelation)));
         }
     }
