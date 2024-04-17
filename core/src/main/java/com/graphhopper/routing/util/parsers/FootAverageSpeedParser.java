@@ -14,6 +14,8 @@ import static com.graphhopper.routing.util.PriorityCode.UNCHANGED;
 import com.graphhopper.util.DistanceCalcEarth;
 import com.graphhopper.util.PointList;
 
+//modified to include naismiths rule
+
 public class FootAverageSpeedParser extends AbstractAverageSpeedParser implements TagParser {
     static final double SLOW_SPEED = 2;
     static final double MEAN_SPEED = 5;
@@ -63,11 +65,17 @@ public class FootAverageSpeedParser extends AbstractAverageSpeedParser implement
     protected double getSpeed(ReaderWay way, Boolean reverse) {
 
         double speed; 
+        double naismith_speed;
         double elevation = getElevation(way, reverse);
         double distance = getEdgeDistance(way);
     
         if (distance > 0.0) {
-            speed = (distance)/(distance/MEAN_SPEED + elevation/600.0);
+            naismith_speed = (distance)/(distance/MEAN_SPEED + elevation/600.0);
+            if (naismith_speed > 0.05) {
+                speed = naismith_speed;
+            } else {
+                speed = 0.05;
+            }
         } else {
             speed = MEAN_SPEED;
         }

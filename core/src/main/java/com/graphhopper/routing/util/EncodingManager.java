@@ -15,6 +15,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
+// modified to add car and footrail networks
 package com.graphhopper.routing.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -195,6 +197,12 @@ public class EncodingManager implements EncodedValueLookup {
             }
             if (em.getVehicles().stream().anyMatch(vehicle -> vehicle.contains("foot") || vehicle.contains("hike") || vehicle.contains("wheelchair")))
                 keys.add(FootNetwork.KEY);
+            
+            if (em.getVehicles().stream().anyMatch(vehicle -> vehicle.contains("car")))
+                keys.add(CarNetwork.KEY);
+
+            if (em.getVehicles().stream().anyMatch(vehicle -> vehicle.contains("footrail")))
+                keys.add(FootRailNetwork.KEY);
 
             DefaultEncodedValueFactory evFactory = new DefaultEncodedValueFactory();
             for (String key : keys)

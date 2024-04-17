@@ -15,6 +15,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
+// modified to include car arnd footrail networks
 package com.graphhopper.routing.ev;
 
 import com.graphhopper.util.PMap;
@@ -61,7 +63,7 @@ public class DefaultEncodedValueFactory implements EncodedValueFactory {
             return Toll.create();
         } else if (TrackType.KEY.equals(name)) {
             return TrackType.create();
-        } else if (BikeNetwork.KEY.equals(name) || FootNetwork.KEY.equals(name)) {
+        } else if (BikeNetwork.KEY.equals(name) || FootNetwork.KEY.equals(name) || CarNetwork.KEY.equals(name) || FootRailNetwork.KEY.equals(name)) {
             return RouteNetwork.create(name);
         } else if (Hazmat.KEY.equals(name)) {
             return Hazmat.create();

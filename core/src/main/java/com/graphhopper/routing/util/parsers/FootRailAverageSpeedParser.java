@@ -18,7 +18,7 @@ public class FootRailAverageSpeedParser extends AbstractAverageSpeedParser imple
     protected Map<RouteNetwork, Integer> routeMap = new HashMap<>();
 
     public FootRailAverageSpeedParser(EncodedValueLookup lookup, PMap properties) {
-        this(lookup.getDecimalEncodedValue(VehicleSpeed.key(properties.getString("name", "car"))),
+        this(lookup.getDecimalEncodedValue(VehicleSpeed.key(properties.getString("name", "footrail"))),
                 lookup.getDecimalEncodedValue(FerrySpeed.KEY));
     }
 
@@ -36,11 +36,7 @@ public class FootRailAverageSpeedParser extends AbstractAverageSpeedParser imple
         String highwayValue = way.getTag("highway");
         String railwayValue = way.getTag("railway");
 
-        if (railwayValue != null) {
-            setSpeed(false, edgeId, edgeIntAccess, RAIL_SPEED);
-            if (avgSpeedEnc.isStoreTwoDirections())
-                setSpeed(true, edgeId, edgeIntAccess, RAIL_SPEED);
-        }
+        
 
 
 
@@ -50,6 +46,17 @@ public class FootRailAverageSpeedParser extends AbstractAverageSpeedParser imple
                 setSpeed(false, edgeId, edgeIntAccess, ferrySpeed);
                 if (avgSpeedEnc.isStoreTwoDirections())
                     setSpeed(true, edgeId, edgeIntAccess, ferrySpeed);
+            } else {
+                if (railwayValue != null) {
+                    setSpeed(false, edgeId, edgeIntAccess, RAIL_SPEED);
+                    if (avgSpeedEnc.isStoreTwoDirections())
+                        setSpeed(true, edgeId, edgeIntAccess, RAIL_SPEED);
+                } else {
+                    String footTag = way.getTag("foot");
+                    if (footTag != null)
+                        setSpeed(false, edgeId, edgeIntAccess, MEAN_SPEED); // check and refine
+                }
+                
             }
             if (!way.hasTag("railway", "platform") && !way.hasTag("man_made", "pier"))
                 return;

@@ -16,6 +16,8 @@
  *  limitations under the License.
  */
 
+
+// modified to work with connecting links between different networks in MRN
 package com.graphhopper.routing.util;
 
 import com.graphhopper.reader.ReaderRelation;
@@ -79,6 +81,9 @@ public class OSMParsers {
             // (route=ferry), which we want, and there aren't so many such ways we do not want
             // https://github.com/graphhopper/graphhopper/pull/2702#discussion_r1038093050
             return true;
+        else if (way.getTag("foot") != null)
+            return true;
+        // above is a modification to include links which join roads/paths to railways(& ferries?) in the mrn
         else if (way.getTag("railway") != null)
             return true;
         else if ("pier".equals(way.getTag("man_made")))

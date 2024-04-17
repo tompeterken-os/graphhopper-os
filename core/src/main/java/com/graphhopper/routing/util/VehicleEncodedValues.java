@@ -16,6 +16,8 @@
  *  limitations under the License.
  */
 
+// modified for including modified encodings and different rounding
+
 package com.graphhopper.routing.util;
 
 import com.graphhopper.routing.ev.*;
@@ -43,20 +45,20 @@ public class VehicleEncodedValues {
         boolean turnCosts = properties.getBool("turn_costs", false);
         BooleanEncodedValue accessEnc = VehicleAccess.create(name);
         DecimalEncodedValue speedEnc = VehicleSpeed.create(name, speedBits, speedFactor, speedTwoDirections);
-        DecimalEncodedValue priorityEnc = VehiclePriority.create(name, 4, PriorityCode.getFactor(1), false);
+        DecimalEncodedValue priorityEnc = VehiclePriority.create(name, 8, PriorityCode.getFactor(1), false);
         BooleanEncodedValue turnRestrictionEnc = turnCosts ? TurnRestriction.create(name) : null;
         return new VehicleEncodedValues(name, accessEnc, speedEnc, priorityEnc, turnRestrictionEnc);
     }
 
     public static VehicleEncodedValues footrail(PMap properties) {
         String name = properties.getString("name", "footrail");
-        int speedBits = properties.getInt("speed_bits", 4);
+        int speedBits = properties.getInt("speed_bits", 7);
         double speedFactor = properties.getDouble("speed_factor", 1);
         boolean speedTwoDirections = properties.getBool("speed_two_directions", false);
         boolean turnCosts = properties.getBool("turn_costs", false);
         BooleanEncodedValue accessEnc = VehicleAccess.create(name);
         DecimalEncodedValue speedEnc = VehicleSpeed.create(name, speedBits, speedFactor, speedTwoDirections);
-        DecimalEncodedValue priorityEnc = VehiclePriority.create(name, 4, PriorityCode.getFactor(1), false);
+        DecimalEncodedValue priorityEnc = VehiclePriority.create(name, 8, PriorityCode.getFactor(1), false);
         BooleanEncodedValue turnRestrictionEnc = turnCosts ? TurnRestriction.create(name) : null;
         return new VehicleEncodedValues(name, accessEnc, speedEnc, priorityEnc, turnRestrictionEnc);
     }
@@ -78,7 +80,7 @@ public class VehicleEncodedValues {
         boolean turnCosts = properties.getBool("turn_costs", false);
         BooleanEncodedValue accessEnc = VehicleAccess.create(name);
         DecimalEncodedValue speedEnc = VehicleSpeed.create(name, speedBits, speedFactor, speedTwoDirections);
-        DecimalEncodedValue priorityEnc = VehiclePriority.create(name, 4, PriorityCode.getFactor(1), false);
+        DecimalEncodedValue priorityEnc = VehiclePriority.create(name, 8, PriorityCode.getFactor(1), false);
         BooleanEncodedValue turnRestrictionEnc = turnCosts ? TurnRestriction.create(name) : null;
         return new VehicleEncodedValues(name, accessEnc, speedEnc, priorityEnc, turnRestrictionEnc);
     }
@@ -98,8 +100,9 @@ public class VehicleEncodedValues {
         boolean turnCosts = properties.getBool("turn_costs", false);
         BooleanEncodedValue accessEnc = VehicleAccess.create(name);
         DecimalEncodedValue speedEnc = VehicleSpeed.create(name, speedBits, speedFactor, true);
+        DecimalEncodedValue priorityEnc = VehiclePriority.create(name, 8, PriorityCode.getFactor(1), true);
         BooleanEncodedValue turnRestrictionEnc = turnCosts ? TurnRestriction.create(name) : null;
-        return new VehicleEncodedValues(name, accessEnc, speedEnc, null, turnRestrictionEnc);
+        return new VehicleEncodedValues(name, accessEnc, speedEnc, priorityEnc, turnRestrictionEnc);
     }
 
     public static VehicleEncodedValues roads(PMap properties) {
