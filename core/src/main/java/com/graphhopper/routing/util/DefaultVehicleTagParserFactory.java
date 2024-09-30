@@ -29,6 +29,8 @@ public class DefaultVehicleTagParserFactory implements VehicleTagParserFactory {
             return VehicleTagParsers.roads(lookup, configuration);
         if (name.equals(CAR))
             return VehicleTagParsers.car(lookup, configuration);
+        if (name.equals(CARFERRY))
+            return VehicleTagParsers.carferry(lookup, configuration);
         if (name.equals(BIKE))
             return VehicleTagParsers.bike(lookup, configuration);
         if (name.equals(RACINGBIKE))
@@ -37,6 +39,8 @@ public class DefaultVehicleTagParserFactory implements VehicleTagParserFactory {
             return VehicleTagParsers.mtb(lookup, configuration);
         if (name.equals(FOOT))
             return VehicleTagParsers.foot(lookup, configuration);
+        if (name.equals(FOOTFERRY))
+            return VehicleTagParsers.footferry(lookup, configuration);
         if (name.equals(MOTORCYCLE))
             return VehicleTagParsers.motorcycle(lookup, configuration);
         if (name.equals(WHEELCHAIR))

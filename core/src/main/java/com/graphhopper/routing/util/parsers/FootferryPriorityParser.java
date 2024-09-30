@@ -15,7 +15,7 @@ import static com.graphhopper.routing.util.parsers.AbstractAccessParser.INTENDED
 import static com.graphhopper.routing.util.parsers.AbstractAverageSpeedParser.getMaxSpeed;
 import static com.graphhopper.routing.util.parsers.AbstractAverageSpeedParser.isValidSpeed;
 
-public class FootPriorityParser implements TagParser {
+public class FootferryPriorityParser implements TagParser {
     final Set<String> ferries = new HashSet<>(FERRIES);
     final Set<String> intendedValues = new HashSet<>(INTENDED);
     final Set<String> safeHighwayTags = new HashSet<>();
@@ -26,13 +26,13 @@ public class FootPriorityParser implements TagParser {
     protected EnumEncodedValue<RouteNetwork> footRouteEnc;
     protected Map<RouteNetwork, Integer> routeMap = new HashMap<>();
 
-    public FootPriorityParser(EncodedValueLookup lookup, PMap properties) {
-        this(lookup.getDecimalEncodedValue(VehiclePriority.key(properties.getString("name", "foot"))),
+    public FootferryPriorityParser(EncodedValueLookup lookup, PMap properties) {
+        this(lookup.getDecimalEncodedValue(VehiclePriority.key(properties.getString("name", "footferry"))),
                 lookup.getEnumEncodedValue(FootNetwork.KEY, RouteNetwork.class)
         );
     }
 
-    protected FootPriorityParser(DecimalEncodedValue priorityEnc, EnumEncodedValue<RouteNetwork> footRouteEnc) {
+    protected FootferryPriorityParser(DecimalEncodedValue priorityEnc, EnumEncodedValue<RouteNetwork> footRouteEnc) {
         this.footRouteEnc = footRouteEnc;
         priorityWayEncoder = priorityEnc;
 
@@ -77,7 +77,7 @@ public class FootPriorityParser implements TagParser {
         Integer priorityFromRelation = routeMap.get(footRouteEnc.getEnum(false, edgeFlags));
         if (highwayValue == null) {
             if (way.hasTag("route", ferries))
-                priorityWayEncoder.setDecimal(false, edgeFlags, PriorityCode.getValue(handlePriority(way, priorityFromRelation)));
+               priorityWayEncoder.setDecimal(false, edgeFlags, PriorityCode.getValue(handlePriority(way, priorityFromRelation)));
         } else {
         priorityWayEncoder.setDecimal(false, edgeFlags, PriorityCode.getValue(handlePriority(way, priorityFromRelation)));
         }

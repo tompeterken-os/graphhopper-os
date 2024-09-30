@@ -224,6 +224,10 @@ public abstract class BikeCommonPriorityParser implements TagParser {
                 weightToPrioMap.put(110d, PriorityCode.values()[lastEntryIndex + 1].getValue());
             }
         }
+
+        if (way.hasTag("fictional", "yes"))
+                weightToPrioMap.put(40d, PRIVATE_DESTINATION.getValue());
+
     }
 
     // TODO duplicated in average speed

@@ -17,7 +17,7 @@ import static com.graphhopper.routing.util.parsers.AbstractAccessParser.INTENDED
 import com.graphhopper.util.DistanceCalcEarth;
 import com.graphhopper.util.PointList;
 
-public class FootAverageSpeedParser extends AbstractAverageSpeedParser implements TagParser {
+public class FootferryAverageSpeedParser extends AbstractAverageSpeedParser implements TagParser {
     static final double SLOW_SPEED = 2.0;
     static final double MEAN_SPEED = 5.0;
     // larger value required - ferries are faster than pedestrians
@@ -29,11 +29,11 @@ public class FootAverageSpeedParser extends AbstractAverageSpeedParser implement
     protected HashSet<String> sidewalksNoValues = new HashSet<>(5);
     protected Map<RouteNetwork, Integer> routeMap = new HashMap<>();
 
-    public FootAverageSpeedParser(EncodedValueLookup lookup, PMap properties) {
-        this(lookup.getDecimalEncodedValue(VehicleSpeed.key(properties.getString("name", "foot"))));
+    public FootferryAverageSpeedParser(EncodedValueLookup lookup, PMap properties) {
+        this(lookup.getDecimalEncodedValue(VehicleSpeed.key(properties.getString("name", "footferry"))));
     }
 
-    protected FootAverageSpeedParser(DecimalEncodedValue speedEnc) {
+    protected FootferryAverageSpeedParser(DecimalEncodedValue speedEnc) {
         super(speedEnc, speedEnc.getNextStorableValue(FERRY_SPEED)); //how to handle ferry speed?
 
         routeMap.put(INTERNATIONAL, UNCHANGED.getValue());

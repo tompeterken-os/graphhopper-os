@@ -26,12 +26,16 @@ import com.graphhopper.util.PointAccess;
 import com.graphhopper.util.PointList;
 import com.graphhopper.util.shapes.GHPoint3D;
 
+import com.graphhopper.util.BitUtil; 
+import com.graphhopper.storage.DataAccess;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntUnaryOperator;
+import java.util.HashMap;
 
 import static java.util.Collections.emptyMap;
 
@@ -53,7 +57,7 @@ import static java.util.Collections.emptyMap;
  *   a different mapping, because we store node tags for only a small fraction of all OSM nodes.
  * </pre>
  */
-class OSMNodeData {
+public class OSMNodeData {
     static final int JUNCTION_NODE = -2;
     static final int EMPTY_NODE = -1;
     static final int END_NODE = 0;
@@ -79,6 +83,13 @@ class OSMNodeData {
     // we use negative ids to create artificial OSM node ids
     private long nextArtificialOSMNodeId = -Long.MAX_VALUE;
 
+    public static HashMap<Long, Integer> mrnNodeMap = new HashMap<>();
+    public static HashMap<Integer, Long> nodeMrnMap = new HashMap<>();
+
+   // private static final BitUtil bitUtil = BitUtil.LITTLE;
+   // private final DataAccess towerNodeMapping;
+   // private final DataAccess pillarNodeMapping;
+
     public OSMNodeData(PointAccess nodeAccess, Directory directory) {
         // we use GHLongIntBTree, because it is based on a tree, not an array, so it can store as many entries as there
         // are longs. this also makes it memory efficient, because there is no need to pre-allocate memory for empty
@@ -86,6 +97,11 @@ class OSMNodeData {
         idsByOsmNodeIds = new GHLongIntBTree(200);
         towerNodes = nodeAccess;
         pillarNodes = new PillarInfo(towerNodes.is3D(), directory);
+
+    //    towerNodeMapping = directory.create("tower_node_mapping");
+    //    towerNodeMapping.create(2000);
+    //    pillarNodeMapping = directory.create("pillar_node_mapping");
+    //    pillarNodeMapping.create(2000);
 
         nodeTagIndicesByOsmNodeIds = new GHLongIntBTree(200);
         nodeTags = new ArrayList<>();
@@ -163,6 +179,7 @@ class OSMNodeData {
         int id = towerNodeToId(nextTowerId);
         idsByOsmNodeIds.put(osmId, id);
         nextTowerId++;
+        storeOsmTowerNodeID(id, osmId);
         return id;
     }
 
@@ -171,6 +188,7 @@ class OSMNodeData {
         int id = pillarNodeToId(nextPillarId);
         idsByOsmNodeIds.put(osmId, id);
         nextPillarId++;
+        //storeOsmNodeID(id, osmId);
         return id;
     }
 
@@ -281,5 +299,23 @@ class OSMNodeData {
 
     public int idToPillarNode(int id) {
         return id - 3;
+    }
+
+    
+
+    protected void storeOsmTowerNodeID(int nodeId, long osmNodeId) {
+        //final DataAccess nodeMapping;
+      
+        nodeId = -nodeId;
+          
+       // nodeMapping = towerNodeMapping;
+       
+        // Not sure why the node process adds 3 to the node id?
+        // Possibly as tower and pillar node are internally stored in the same map,
+        // The +3 removes the conflict where id == 0, which would result in tower == -0, pillar == 0
+        nodeId -= 3;
+        
+        nodeMrnMap.put(nodeId, osmNodeId);
+        mrnNodeMap.put(osmNodeId, nodeId);
     }
 }

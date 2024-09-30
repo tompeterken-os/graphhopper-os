@@ -80,6 +80,10 @@ public class OSMParsers {
             return true;
         else if ("pier".equals(way.getTag("man_made")))
             return true;
+        else if (way.getTag("foot") != null)
+            return true;
+        else if (way.getTag("railway") != null)
+            return true;
         else if ("platform".equals(way.getTag("railway")))
             return true;
         else

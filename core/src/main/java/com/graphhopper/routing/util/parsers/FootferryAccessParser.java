@@ -36,7 +36,7 @@ import static com.graphhopper.routing.ev.RouteNetwork.*;
 import static com.graphhopper.routing.util.PriorityCode.UNCHANGED;
 import static java.util.Collections.emptyMap;
 
-public class FootAccessParser extends AbstractAccessParser implements TagParser {
+public class FootferryAccessParser extends AbstractAccessParser implements TagParser {
 
     final Set<String> safeHighwayTags = new HashSet<>();
     final Set<String> allowedHighwayTags = new HashSet<>();
@@ -45,13 +45,13 @@ public class FootAccessParser extends AbstractAccessParser implements TagParser 
     protected HashSet<String> sidewalkValues = new HashSet<>(5);
     protected Map<RouteNetwork, Integer> routeMap = new HashMap<>();
 
-    public FootAccessParser(EncodedValueLookup lookup, PMap properties) {
-        this(lookup.getBooleanEncodedValue(VehicleAccess.key(properties.getString("name", "foot"))));
+    public FootferryAccessParser(EncodedValueLookup lookup, PMap properties) {
+        this(lookup.getBooleanEncodedValue(VehicleAccess.key(properties.getString("name", "footferry"))));
         blockPrivate(properties.getBool("block_private", true));
         blockFords(properties.getBool("block_fords", false));
     }
 
-    protected FootAccessParser(BooleanEncodedValue accessEnc) {
+    protected FootferryAccessParser(BooleanEncodedValue accessEnc) {
         super(accessEnc, TransportationMode.FOOT);
 
         intendedValues.add("yes");
@@ -111,11 +111,11 @@ public class FootAccessParser extends AbstractAccessParser implements TagParser 
         if (highwayValue == null) {
             WayAccess acceptPotentially = WayAccess.CAN_SKIP;
 
-            //if (way.hasTag("route", ferries)) {
-            //    String footTag = way.getTag("foot");
-            //    if (footTag == null || intendedValues.contains(footTag))
-            //        acceptPotentially = WayAccess.FERRY;
-            //}
+            if (way.hasTag("route", ferries)) {
+                String footTag = way.getTag("foot");
+                if (footTag == null || intendedValues.contains(footTag))
+                    acceptPotentially = WayAccess.FERRY;
+            }
 
             // special case not for all acceptedRailways, only platform
             if (way.hasTag("railway", "platform"))

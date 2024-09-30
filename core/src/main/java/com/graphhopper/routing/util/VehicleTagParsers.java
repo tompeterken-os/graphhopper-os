@@ -43,7 +43,15 @@ public class VehicleTagParsers {
         return new VehicleTagParsers(
                 new CarAccessParser(lookup, properties).init(properties.getObject("date_range_parser", new DateRangeParser())),
                 new CarAverageSpeedParser(lookup, properties),
-                null
+                new CarPriorityParser(lookup, properties)
+        );
+    }
+
+    public static VehicleTagParsers carferry(EncodedValueLookup lookup, PMap properties) {
+        return new VehicleTagParsers(
+                new CarferryAccessParser(lookup, properties).init(properties.getObject("date_range_parser", new DateRangeParser())),
+                new CarferryAverageSpeedParser(lookup, properties),
+                new CarferryPriorityParser(lookup, properties)
         );
     }
 
@@ -76,6 +84,14 @@ public class VehicleTagParsers {
                 new FootAccessParser(lookup, properties).init(properties.getObject("date_range_parser", new DateRangeParser())),
                 new FootAverageSpeedParser(lookup, properties),
                 new FootPriorityParser(lookup, properties)
+        );
+    }
+
+    public static VehicleTagParsers footferry(EncodedValueLookup lookup, PMap properties) {
+        return new VehicleTagParsers(
+                new FootferryAccessParser(lookup, properties).init(properties.getObject("date_range_parser", new DateRangeParser())),
+                new FootferryAverageSpeedParser(lookup, properties),
+                new FootferryPriorityParser(lookup, properties)
         );
     }
 

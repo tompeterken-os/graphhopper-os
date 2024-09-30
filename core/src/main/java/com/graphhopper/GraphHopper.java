@@ -23,6 +23,7 @@ import com.graphhopper.config.CHProfile;
 import com.graphhopper.config.LMProfile;
 import com.graphhopper.config.Profile;
 import com.graphhopper.reader.dem.*;
+import com.graphhopper.reader.osm.OSMNodeData;
 import com.graphhopper.reader.osm.OSMReader;
 import com.graphhopper.reader.osm.RestrictionTagParser;
 import com.graphhopper.reader.osm.conditional.DateRangeParser;
@@ -1454,4 +1455,10 @@ public class GraphHopper {
     public OSMReaderConfig getReaderConfig() {
         return osmReaderConfig;
     }
+
+    public int getTowerid(long mrnNodeId) {
+    int nodeID;
+    nodeID = OSMNodeData.mrnNodeMap.get(mrnNodeId);
+    return nodeID;
+}
 }

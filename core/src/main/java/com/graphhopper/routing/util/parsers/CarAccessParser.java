@@ -58,7 +58,7 @@ public class CarAccessParser extends AbstractAccessParser implements TagParser {
         restrictedValues.add("forestry");
         restrictedValues.add("delivery");
 
-        blockPrivate(properties.getBool("block_private", true));
+        blockPrivate(properties.getBool("block_private", false));
         blockFords(properties.getBool("block_fords", false));
 
         intendedValues.add("yes");
@@ -89,14 +89,14 @@ public class CarAccessParser extends AbstractAccessParser implements TagParser {
         String highwayValue = way.getTag("highway");
         String firstValue = way.getFirstPriorityTag(restrictions);
         if (highwayValue == null) {
-            if (way.hasTag("route", ferries)) {
-                if (restrictedValues.contains(firstValue))
-                    return WayAccess.CAN_SKIP;
-                if (intendedValues.contains(firstValue) ||
-                        // implied default is allowed only if foot and bicycle is not specified:
-                        firstValue.isEmpty() && !way.hasTag("foot") && !way.hasTag("bicycle"))
-                    return WayAccess.FERRY;
-            }
+            //if (way.hasTag("route", ferries)) {
+            //    if (restrictedValues.contains(firstValue))
+            //        return WayAccess.CAN_SKIP;
+            //    if (intendedValues.contains(firstValue) ||
+            //            // implied default is allowed only if foot and bicycle is not specified:
+            //            firstValue.isEmpty() && !way.hasTag("foot") && !way.hasTag("bicycle"))
+            //        return WayAccess.FERRY;
+            //}
             return WayAccess.CAN_SKIP;
         }
 

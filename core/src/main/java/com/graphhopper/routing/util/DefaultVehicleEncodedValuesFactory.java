@@ -32,6 +32,9 @@ public class DefaultVehicleEncodedValuesFactory implements VehicleEncodedValuesF
 
         if (name.equals(CAR))
             return VehicleEncodedValues.car(configuration);
+        
+        if (name.equals(CARFERRY))
+            return VehicleEncodedValues.carferry(configuration);
 
         if (name.equals("car4wd"))
             throw new IllegalArgumentException("Instead of car4wd use the roads vehicle and a custom_model, see custom_models/car4wd.json");
@@ -50,6 +53,9 @@ public class DefaultVehicleEncodedValuesFactory implements VehicleEncodedValuesF
 
         if (name.equals(FOOT))
             return VehicleEncodedValues.foot(configuration);
+
+        if (name.equals(FOOTFERRY))
+            return VehicleEncodedValues.footferry(configuration);
 
         if (name.equals(HIKE))
             throw new IllegalArgumentException("Instead of hike use the foot vehicle and a custom model, see custom_models/hike.json and #2759");

@@ -177,6 +177,9 @@ public class EncodingManager implements EncodedValueLookup {
             }
             if (em.getVehicles().stream().anyMatch(vehicle -> vehicle.contains("foot") || vehicle.contains("hike") || vehicle.contains("wheelchair")))
                 keys.add(FootNetwork.KEY);
+                
+            if (em.getVehicles().stream().anyMatch(vehicle -> vehicle.contains("car")))
+                keys.add(CarNetwork.KEY);
 
             DefaultEncodedValueFactory evFactory = new DefaultEncodedValueFactory();
             for (String key : keys)

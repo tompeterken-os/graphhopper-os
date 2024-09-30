@@ -24,32 +24,32 @@ public class MotorcycleAverageSpeedParser extends CarAverageSpeedParser {
         defaultSpeedMap.clear();
 
         // autobahn
-        defaultSpeedMap.put("motorway", 100);
-        defaultSpeedMap.put("motorway_link", 70);
+        defaultSpeedMap.put("motorway", 100.0);
+        defaultSpeedMap.put("motorway_link", 70.0);
         // bundesstraße
-        defaultSpeedMap.put("trunk", 80);
-        defaultSpeedMap.put("trunk_link", 75);
+        defaultSpeedMap.put("trunk", 80.0);
+        defaultSpeedMap.put("trunk_link", 75.0);
         // linking bigger town
-        defaultSpeedMap.put("primary", 65);
-        defaultSpeedMap.put("primary_link", 60);
+        defaultSpeedMap.put("primary", 65.0);
+        defaultSpeedMap.put("primary_link", 60.0);
         // linking towns + villages
-        defaultSpeedMap.put("secondary", 60);
-        defaultSpeedMap.put("secondary_link", 50);
+        defaultSpeedMap.put("secondary", 60.0);
+        defaultSpeedMap.put("secondary_link", 50.0);
         // streets without middle line separation
-        defaultSpeedMap.put("tertiary", 50);
-        defaultSpeedMap.put("tertiary_link", 40);
-        defaultSpeedMap.put("unclassified", 30);
-        defaultSpeedMap.put("residential", 30);
+        defaultSpeedMap.put("tertiary", 50.0);
+        defaultSpeedMap.put("tertiary_link", 40.0);
+        defaultSpeedMap.put("unclassified", 30.0);
+        defaultSpeedMap.put("residential", 30.0);
         // spielstraße
-        defaultSpeedMap.put("living_street", 5);
-        defaultSpeedMap.put("service", 20);
+        defaultSpeedMap.put("living_street", 5.0);
+        defaultSpeedMap.put("service", 20.0);
         // unknown road
-        defaultSpeedMap.put("road", 20);
+        defaultSpeedMap.put("road", 20.0);
         // forestry stuff
-        defaultSpeedMap.put("track", 15);
+        defaultSpeedMap.put("track", 15.0);
 
         trackTypeSpeedMap.clear();
-        trackTypeSpeedMap.put("grade1", 20);
+        trackTypeSpeedMap.put("grade1", 20.0);
         trackTypeSpeedMap.put(null, defaultSpeedMap.get("track"));
     }
 
@@ -63,9 +63,10 @@ public class MotorcycleAverageSpeedParser extends CarAverageSpeedParser {
                 setSpeed(true, edgeFlags, ferrySpeed);
             }
         } else {
-            double speed = getSpeed(way);
-            setSpeed(true, edgeFlags, applyMaxSpeed(way, speed, true));
-            setSpeed(false, edgeFlags, applyMaxSpeed(way, speed, true));
+            double speedFwd = getSpeed(way, false);
+            double speedBwd = getSpeed(way, true);
+            setSpeed(true, edgeFlags, applyMaxSpeed(way, speedBwd, true));
+            setSpeed(false, edgeFlags, applyMaxSpeed(way, speedFwd, true));
         }
     }
 
