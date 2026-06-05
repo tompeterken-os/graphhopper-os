@@ -47,6 +47,12 @@ public class DefaultTagParserFactory implements TagParserFactory {
             return new OSMMaxAxleLoadParser(lookup.getDecimalEncodedValue(MaxAxleLoad.KEY));
         else if (name.equals(MaxLength.KEY))
             return new OSMMaxLengthParser(lookup.getDecimalEncodedValue(MaxLength.KEY));
+        else if (name.equals(MinRoadWidth.KEY))
+            return new OSRoadWidthMinimumParser(lookup.getDecimalEncodedValue(MinRoadWidth.KEY));
+        else if (name.equals(PavementPresence.KEY))
+            return new OSOverallPavementPresenceParser(lookup.getDecimalEncodedValue(PavementPresence.KEY));
+        else if (name.equals(StreetLight.KEY))
+            return new OSStreetLightParser(lookup.getEnumEncodedValue(StreetLight.KEY, StreetLight.class));
         else if (name.equals(Surface.KEY))
             return new OSMSurfaceParser(lookup.getEnumEncodedValue(Surface.KEY, Surface.class));
         else if (name.equals(Smoothness.KEY))

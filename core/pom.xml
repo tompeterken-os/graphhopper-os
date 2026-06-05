@@ -190,6 +190,60 @@
                     </execution>
                 </executions>
             </plugin>
+             <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <version>3.5.1</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>shade</goal>
+                                </goals>
+                                <configuration>
+                                    <transformers>
+                                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                    </transformers>
+                                    <relocations>
+                                        <relocation>
+                                            <pattern>org.codehaus.janino</pattern>
+                                            <shadedPattern>com.graphhopper.shaded.janino</shadedPattern>
+                                        </relocation>
+                                        <relocation>
+                                            <pattern>org.codehaus.commons.compiler</pattern>
+                                            <shadedPattern>com.graphhopper.shaded.commons.compiler</shadedPattern>
+                                        </relocation>
+                                    </relocations>
+                                    <filters>
+                                        <filter>
+                                            <artifact>*:*</artifact>
+                                            <excludes>
+                                                <exclude>META-INF/**</exclude>
+                                            </excludes>
+                                        </filter>
+                                        <filter>
+                                            <artifact>org.codehaus.janino:*</artifact>
+                                            <includes>
+                                                <include>**</include>
+                                            </includes>
+                                        </filter>
+                                    </filters>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.codehaus.janino</groupId>
+                                <artifactId>janino</artifactId>
+                                <version>3.1.9</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.codehaus.janino</groupId>
+                                <artifactId>commons-compiler</artifactId>
+                                <version>3.1.9</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
         </plugins>
 
         <!-- make version available at runtime via version file -->

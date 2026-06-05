@@ -47,10 +47,16 @@ public class DefaultEncodedValueFactory implements EncodedValueFactory {
             return MaxAxleLoad.create();
         } else if (MaxLength.KEY.equals(name)) {
             return MaxLength.create();
+        } else if (PavementPresence.KEY.equals(name)) {
+            return PavementPresence.create();
+         } else if (MinRoadWidth.KEY.equals(name)) {
+            return MinRoadWidth.create();
         } else if (Hgv.KEY.equals(name)) {
             return new EnumEncodedValue<>(Hgv.KEY, Hgv.class);
         } else if (Surface.KEY.equals(name)) {
             return new EnumEncodedValue<>(Surface.KEY, Surface.class);
+        } else if (StreetLight.KEY.equals(name)) {
+            return new EnumEncodedValue<>(StreetLight.KEY, StreetLight.class);
         } else if (Smoothness.KEY.equals(name)) {
             return new EnumEncodedValue<>(Smoothness.KEY, Smoothness.class);
         } else if (Toll.KEY.equals(name)) {

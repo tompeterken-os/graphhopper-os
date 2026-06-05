@@ -133,6 +133,30 @@ public class OSMValueExtractor {
         }
     }
 
+     public static void extractPercent(IntsRef edgeFlags, ReaderWay way, DecimalEncodedValue valueEncoder, List<String> keys) {
+        final String rawValue = way.getFirstPriorityTag(keys);
+        double value = stringToPercent(rawValue);
+
+        if (Double.isNaN(value)) value = 0.0;
+
+        valueEncoder.setDecimal(false, edgeFlags, value);
+        // too many
+//        if (value - valueEncoder.getDecimal(false, edgeFlags) > 2)
+//            logger.warn("Value " + value + " for " + valueEncoder.getName() + " was too large and truncated to " + valueEncoder.getDecimal(false, edgeFlags));
+    }
+
+    public static double stringToPercent(String value) {
+        if (isInvalidValue(value))
+            return Double.NaN;
+        double factor = 1;
+        double offset = 0;
+        try {
+            return Double.parseDouble(value) * factor + offset;
+        } catch (NumberFormatException e) {
+            return Double.NaN;
+        }
+    }
+
     public static boolean isInvalidValue(String value) {
         value = toLowerCase(value);
         return value.isEmpty() || value.startsWith("default") || value.equals("none") || value.equals("unknown")
